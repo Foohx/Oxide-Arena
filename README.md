@@ -1,2 +1,2 @@
--Oxide--Arena
-=============
+[Oxide Plugin] Arena
+====================
