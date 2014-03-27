@@ -151,7 +151,7 @@ function PLUGIN:cmdArenaJoin(netuser, cmd, args)
 end
 
 function PLUGIN:cmdArenaLeave(netuser, cmd, args)
-    local success, err = self:LeaveArena(netuser)
+    local success, err = self:LeaveArena(netuser, false)
     if (not success) then
         rust.Notice(netuser, err)
         return
@@ -257,7 +257,7 @@ function PLUGIN:OnUserDisconnect(networkplayer)
 
   if (self:IsPlaying(netuser)) then
     flags_plugin:AddFlag(netuser, "leftarena")
-    self:LeaveArena(netuser)
+    self:LeaveArena(netuser, true)
   end
 end
 
@@ -406,7 +406,7 @@ function PLUGIN:EndArena()
   local netusers = rust.GetAllNetUsers()
   for k,netuser in pairs(netusers) do
     if (self:IsPlaying(netuser)) then
-      self:LeaveArena(netuser)
+      self:LeaveArena(netuser, false)
     end
   end
 
@@ -441,7 +441,7 @@ function PLUGIN:JoinArena(netuser)
   return true
 end
 
-function PLUGIN:LeaveArena(netuser)
+function PLUGIN:LeaveArena(netuser, method)
   if (not self:IsPlaying(netuser)) then
     return false, "You are not currently in the Arena."
   end
@@ -456,7 +456,12 @@ function PLUGIN:LeaveArena(netuser)
     self:TeleportPlayerHome(netuser)
     self.ArenaData.Users[rust.GetUserID(netuser)] = nil
     -- RPC Error Patch
-    self.ArenaData.InventoryToClean[rust.GetUserID(netuser)] = 1
+    if (method == true) then
+        self.ArenaData.InventoryToClean[rust.GetUserID(netuser)] = 1
+    else
+        local inv = rust.GetInventory(netuser)
+        inv:Clear()
+    end
     -- -----
     --plugins.Call("OnArenaLeavePost", rust.GetUserID(netuser)) -- bypass RPC errors when any user leave an arena game
   else
