@@ -174,10 +174,10 @@ end
 -- *******************************************
 -- Called after a player has left the Arena.
 -- *******************************************
-function PLUGIN:OnArenaLeavePost(netuser)
+function PLUGIN:OnArenaLeavePost( userID )
   if (self.LastManStandingData.IsChosen) then
-    self:ClearInventory(netuser)
-    local userID = rust.GetUserID(netuser)
+    --self:ClearInventory(netuser)
+    --local userID = rust.GetUserID(netuser)
     self.LastManStandingData.Users[userID] = nil
     self.LastManStandingData.TotalPlayers = self.LastManStandingData.TotalPlayers - 1
 
