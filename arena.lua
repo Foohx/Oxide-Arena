@@ -1,157 +1,154 @@
 PLUGIN.Title = "Arena"
 PLUGIN.Description = "Arena API - Time for arena minigames!"
-PLUGIN.Author = "eDeloa & update by Hatemail"
+PLUGIN.Author = "eDeloa & update by Hatemail & fork by Fooxh"
 PLUGIN.Version = "1.0.1"
 
 print(PLUGIN.Title .. " (" .. PLUGIN.Version .. ") plugin loading")
 
 function PLUGIN:Init()
-  -- Load the config file
-  local b, res = config.Read("arena")
-  self.Config = res or {}
-  if (not b) then
-    self:LoadDefaultConfig()
-    if (res) then
-      config.Save("arena")
+    -- Load the config file
+    local b, res = config.Read("arena")
+    self.Config = res or {}
+    if (not b) then
+        self:LoadDefaultConfig()
+        if (res) then
+            config.Save("arena")
+        end
     end
-  end
 
-  self.ArenaData = {}
-  self.ArenaData.Games = {}
-  self.ArenaData.CurrentGame = nil
-  self.ArenaData.Users = {}
-  self.ArenaData.UserCount = 0
-  self.ArenaData.IsOpen = false
-  self.ArenaData.HasStarted = false
-  self.ArenaData.HasEnded = false
-
-
-  --flags_plugin:AddFlagsChatCommand(self, "g", {}, self.cmdQuickSetup)
+    self.ArenaData = {}
+    self.ArenaData.Games = {}
+    self.ArenaData.CurrentGame = nil
+    self.ArenaData.Users = {}
+    self.ArenaData.UserCount = 0
+    self.ArenaData.IsOpen = false
+    self.ArenaData.HasStarted = false
+    self.ArenaData.HasEnded = false
 end
 
 function PLUGIN:PostInit()
-  flags_plugin = plugins.Find("flags")
-  if (not flags_plugin) then
-    error("You do not have the Flags plugin installed! Check here: http://forum.rustoxide.com/resources/flags.155")
-    return
-  end
+    flags_plugin = plugins.Find("flags")
+    if (not flags_plugin) then
+        error("You do not have the Flags plugin installed! Check here: http://forum.rustoxide.com/resources/flags.155")
+        return
+    end
 
-  spawns_plugin = plugins.Find("spawns")
-  if (not spawns_plugin) then
-    error("You do not have the Spawns plugin installed! Check here: http://forum.rustoxide.com/resources/spawns.233")
-    return
-  end
-  arena_loaded = true
+    spawns_plugin = plugins.Find("spawns")
+    if (not spawns_plugin) then
+        error("You do not have the Spawns plugin installed! Check here: http://forum.rustoxide.com/resources/spawns.233")
+        return
+    end
+    arena_loaded = true
 
-  if (not arena_loaded) then
-    error("This plugin requires the Flags and Spawns plugins to be installed!")
-    return
-  end
-  flags_plugin:AddFlagsChatCommand(self, "arena_game", {"arena_admin"}, self.cmdArenaGame)
-  flags_plugin:AddFlagsChatCommand(self, "arena_open", {"arena_admin"}, self.cmdArenaOpen)
-  flags_plugin:AddFlagsChatCommand(self, "arena_close", {"arena_admin"}, self.cmdArenaClose)
-  flags_plugin:AddFlagsChatCommand(self, "arena_start", {"arena_admin"}, self.cmdArenaStart)
-  flags_plugin:AddFlagsChatCommand(self, "arena_end", {"arena_admin"}, self.cmdArenaEnd)
-  flags_plugin:AddFlagsChatCommand(self, "arena_spawnfile", {"arena_admin"}, self.cmdArenaSpawnFile)
+    if (not arena_loaded) then
+        error("This plugin requires the Flags and Spawns plugins to be installed!")
+        return
+    end
+    flags_plugin:AddFlagsChatCommand(self, "arena_game", {"arena_admin"}, self.cmdArenaGame)
+    flags_plugin:AddFlagsChatCommand(self, "arena_open", {"arena_admin"}, self.cmdArenaOpen)
+    flags_plugin:AddFlagsChatCommand(self, "arena_close", {"arena_admin"}, self.cmdArenaClose)
+    flags_plugin:AddFlagsChatCommand(self, "arena_start", {"arena_admin"}, self.cmdArenaStart)
+    flags_plugin:AddFlagsChatCommand(self, "arena_end", {"arena_admin"}, self.cmdArenaEnd)
+    flags_plugin:AddFlagsChatCommand(self, "arena_spawnfile", {"arena_admin"}, self.cmdArenaSpawnFile)
 
-  flags_plugin:AddFlagsChatCommand(self, "arena_list", {}, self.cmdArenaList)
-  flags_plugin:AddFlagsChatCommand(self, "arena_join", {}, self.cmdArenaJoin)
-  flags_plugin:AddFlagsChatCommand(self, "arena_leave", {}, self.cmdArenaLeave)
-  self:LoadArenaSpawnFile(self.Config.SpawnFileName)
+    flags_plugin:AddFlagsChatCommand(self, "arena_list", {}, self.cmdArenaList)
+    flags_plugin:AddFlagsChatCommand(self, "arena_join", {}, self.cmdArenaJoin)
+    flags_plugin:AddFlagsChatCommand(self, "arena_leave", {}, self.cmdArenaLeave)
+    self:LoadArenaSpawnFile(self.Config.SpawnFileName)
 end
 
 -- *******************************************
 -- CHAT COMMANDS
 -- *******************************************
 function PLUGIN:cmdArenaList(netuser, cmd, args)
-  rust.SendChatToUser(netuser, self.Config.ChatName, "Game#         Arena Game")
-  rust.SendChatToUser(netuser, self.Config.ChatName, "---------------------------")
-  for i = 1, #self.ArenaData.Games do
-    rust.SendChatToUser(netuser, self.Config.ChatName, "#" .. i .. "                  " .. self.ArenaData.Games[i].GameName)
-  end
+    rust.SendChatToUser(netuser, self.Config.ChatName, "Game#         Arena Game")
+    rust.SendChatToUser(netuser, self.Config.ChatName, "---------------------------")
+    for i = 1, #self.ArenaData.Games do
+        rust.SendChatToUser(netuser, self.Config.ChatName, "#" .. i .. "                  " .. self.ArenaData.Games[i].GameName)
+    end
 end
 
 function PLUGIN:cmdArenaGame(netuser, cmd, args)
-  if (not args[1]) then
-    rust.Notice(netuser, "Syntax: /arena_game {gameID}")
-    return
-  end
+    if (not args[1]) then
+        rust.Notice(netuser, "Syntax: /arena_game {gameID}")
+        return
+    end
 
-  local gameID = tonumber(args[1])
-  local success, err = self:SelectArenaGame(gameID)
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local gameID = tonumber(args[1])
+    local success, err = self:SelectArenaGame(gameID)
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 
-  rust.Notice(netuser, self.ArenaData.Games[self.ArenaData.CurrentGame].GameName .. " is now the next Arena game.")
+    rust.Notice(netuser, self.ArenaData.Games[self.ArenaData.CurrentGame].GameName .. " is now the next Arena game.")
 end
 
 function PLUGIN:cmdArenaOpen(netuser, cmd, args)
-  local success, err = self:OpenArena()
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local success, err = self:OpenArena()
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 end
 
 function PLUGIN:cmdArenaClose(netuser, cmd, args)
-  local success, err = self:CloseArena()
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local success, err = self:CloseArena()
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 end
 
 function PLUGIN:cmdArenaStart(netuser, cmd, args)
-  local success, err = self:StartArena()
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local success, err = self:StartArena()
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 end
 
 function PLUGIN:cmdArenaEnd(netuser, cmd, args)
-  local success, err = self:EndArena()
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local success, err = self:EndArena()
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 end
 
 function PLUGIN:cmdArenaSpawnFile(netuser, cmd, args)
-  if (not args[1]) then
-    rust.Notice(netuser, "Syntax: /arena_spawnfile {filename}")
-    return
-  end
+    if (not args[1]) then
+        rust.Notice(netuser, "Syntax: /arena_spawnfile {filename}")
+        return
+    end
+
+    local success, err = self:LoadArenaSpawnFile(args[1])
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
   
-  local success, err = self:LoadArenaSpawnFile(args[1])
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
-  
-  rust.Notice(netuser, "Successfully loaded the spawn file.")
+    rust.Notice(netuser, "Successfully loaded the spawn file.")
 end
 
 function PLUGIN:cmdArenaJoin(netuser, cmd, args)
-  local success, err = self:JoinArena(netuser)
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local success, err = self:JoinArena(netuser)
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 
-  rust.Notice(netuser, "Successfully joined the Arena.")
+    rust.Notice(netuser, "Successfully joined the Arena.")
 end
 
 function PLUGIN:cmdArenaLeave(netuser, cmd, args)
-  local success, err = self:LeaveArena(netuser)
-  if (not success) then
-    rust.Notice(netuser, err)
-    return
-  end
+    local success, err = self:LeaveArena(netuser)
+    if (not success) then
+        rust.Notice(netuser, err)
+        return
+    end
 
-  rust.Notice(netuser, "Successfully left the Arena.")
+    rust.Notice(netuser, "Successfully left the Arena.")
 end
 
 --[[function PLUGIN:cmdQuickSetup(netuser, cmd, args)
@@ -166,8 +163,8 @@ end]]--
 -- API COMMANDS
 -- *******************************************
 function PLUGIN:RegisterArenaGame(gamename)
-  table.insert(self.ArenaData.Games, {GameName = gamename})
-  return #(self.ArenaData.Games)
+    table.insert(self.ArenaData.Games, {GameName = gamename})
+    return #(self.ArenaData.Games)
 end
 
 -- *******************************************
@@ -438,7 +435,7 @@ function PLUGIN:LeaveArena(netuser)
   if (self.ArenaData.HasStarted) then
     self:TeleportPlayerHome(netuser)
     self.ArenaData.Users[rust.GetUserID(netuser)] = nil
-    plugins.Call("OnArenaLeavePost", netuser)
+    -- plugins.Call("OnArenaLeavePost", netuser) -- bypass RPC errors when any user leave an arena game
   else
     self.ArenaData.Users[rust.GetUserID(netuser)] = nil
   end
