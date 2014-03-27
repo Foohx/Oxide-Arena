@@ -1,6 +1,6 @@
 PLUGIN.Title = "Arena"
 PLUGIN.Description = "Arena API - Time for arena minigames!"
-PLUGIN.Author = "eDeloa & update by Hatemail & fork by Fooxh"
+PLUGIN.Author = "eDeloa, Hatemail & update by Fooxh"
 PLUGIN.Version = "1.0.1"
 
 print(PLUGIN.Title .. " (" .. PLUGIN.Version .. ") plugin loading")
@@ -24,6 +24,15 @@ function PLUGIN:Init()
     self.ArenaData.IsOpen = false
     self.ArenaData.HasStarted = false
     self.ArenaData.HasEnded = false
+
+    -- create ArenaData.InventoryToClean
+    self.ArenaDataFile_InventoryToClean = util.GetDatafile( "arena_inventory" )
+    local txt = self.ArenaDataFile_InventoryToClean:GetText()
+    if (txt ~= "") then
+        self.ArenaData.InventoryToClean = json.decode( txt )
+    else
+        self.ArenaData.InventoryToClean = {}
+    end 
 end
 
 function PLUGIN:PostInit()
@@ -210,18 +219,29 @@ function PLUGIN:OnSpawnPlayer(playerclient, usecamp, avatar)
   --  timer.Once(0.1, function() self:TeleportPlayerHome(playerclient.netUser) self.ArenaData.Users[rust.GetUserID(netuser)] = nil end)
   --  timer.Once(0.1, function() plugins.Call("OnArenaLeavePost", playerclient.netUser) end)
   end
+
+    local netuser = playerclient.netUser
+    if ( self.ArenaData.InventoryToClean[rust.GetUserID(netuser)] ~= nil) then
+        timer.Once( 5,
+        function()
+            self.ArenaData.InventoryToClean[rust.GetUserID(playerclient.netUser)] = nil
+            local inv = rust.GetInventory(playerclient.netUser)
+            inv:Clear()
+            self:KillPlayer( playerclient.netUser )
+        end)
+    end
 end
 
 function PLUGIN:OnUserConnect(netuser)
-  if (not arena_loaded) then
-    error("This plugin requires the Flags and Spawns plugins to be installed!")
-    return
-  end
+    if (not arena_loaded) then
+        error("This plugin requires the Flags and Spawns plugins to be installed!")
+        return
+    end
 
-  if (flags_plugin:HasActualFlag(netuser, "leftarena")) then
-    timer.Once(0, function() self:KillPlayer(netuser) end)
-    flags_plugin:RemoveFlag(netuser, "leftarena")
-  end
+    if (flags_plugin:HasActualFlag(netuser, "leftarena")) then
+        timer.Once(0, function() self:KillPlayer(netuser) end)
+        flags_plugin:RemoveFlag(netuser, "leftarena")
+    end
 end
 
 function PLUGIN:OnUserDisconnect(networkplayer)
@@ -435,11 +455,14 @@ function PLUGIN:LeaveArena(netuser)
   if (self.ArenaData.HasStarted) then
     self:TeleportPlayerHome(netuser)
     self.ArenaData.Users[rust.GetUserID(netuser)] = nil
-    -- plugins.Call("OnArenaLeavePost", netuser) -- bypass RPC errors when any user leave an arena game
+    -- RPC Error Patch
+    self.ArenaData.InventoryToClean[rust.GetUserID(netuser)] = 1
+    -- -----
+    --plugins.Call("OnArenaLeavePost", rust.GetUserID(netuser)) -- bypass RPC errors when any user leave an arena game
   else
     self.ArenaData.Users[rust.GetUserID(netuser)] = nil
   end
-
+  print("DONE A !")
   return true
 end
 

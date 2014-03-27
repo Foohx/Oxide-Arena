@@ -172,10 +172,10 @@ end
 -- *******************************************
 -- Called after a player has left the Arena.
 -- *******************************************
-function PLUGIN:OnArenaLeavePost(netuser)
+function PLUGIN:OnArenaLeavePost( userID )
   if (self.DeathmatchData.IsChosen) then
-    self:ClearInventory(netuser)
-    local userID = rust.GetUserID(netuser)
+    --self:ClearInventory(netuser) -- if inventory is cleared here, user will crash with many RPC errors :(
+    --local userID = rust.GetUserID(netuser)
     self.DeathmatchData.Users[userID] = nil
   end
 end
