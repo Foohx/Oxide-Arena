@@ -9,8 +9,13 @@ This plugin, and the minigames that connect to it, will allow you to hold miniga
 + Platform: Linux, Windows or Mac
 + PlayRust server in its latest version
 + Oxide <= 1.17 (and maybe latest)
-+ Plugins: Flags, Spawns
++ Plugin: Flags, Spawns
 
 ## Install
 
-...
+Put the plugin arena.lua well as flags.lua plugins and spawns.lua in the plugin folder of your server.
++ arena.lua
++ require/flags.lua
++ require/spawns.lua
+
+You can also add one or more games, always in the same folder. For this look at the games available in games/
