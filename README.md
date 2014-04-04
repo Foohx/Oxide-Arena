@@ -7,15 +7,15 @@ This plugin, and the minigames that connect to it, will allow you to hold miniga
 ## Requirements
 
 + Platform: Linux, Windows or Mac
-+ PlayRust server in its latest version
-+ Oxide <= 1.17 (and maybe latest)
-+ Plugin: Flags, Spawns
++ [PlayRust](http://playrust.com/) server in its latest version
++ [Oxide](http://rustoxide.com/) <= 1.17 (and maybe latest)
++ Plugin: [Flags, Spawns](https://github.com/Foohx/Oxide-Arena/tree/master/require)
 
 ## Install
 
 Put the plugin arena.lua well as flags.lua plugins and spawns.lua in the plugin folder of your server.
 + arena.lua
-+ require/flags.lua
-+ require/spawns.lua
++ [require](https://github.com/Foohx/Oxide-Arena/tree/master/require)/flags.lua
++ [require](https://github.com/Foohx/Oxide-Arena/tree/master/require)/spawns.lua
 
-You can also add one or more games, always in the same folder. For this look at the games available in games/
+You can also add one or more games, always in the same folder. For this look at the games available in [games/](https://github.com/Foohx/Oxide-Arena/tree/master/games)
