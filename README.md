@@ -23,6 +23,7 @@ You can also add one or more games, always in the same folder. For this look at 
 
 ## Commands
 
+```
 /arena_spawnfile arena_admin
 /arena_game arena_admin
 /arena_open arena_admin
@@ -32,9 +33,10 @@ You can also add one or more games, always in the same folder. For this look at 
 /arena_list <no flag required>
 /arena_join <no flag required>
 /arena_leave <no flag required>
+```
 
 + /arena_spawnfile {filename}
-++ Tell the Arena system which spawnfile you would like to use for the Arena spawns. For easy directions on how to set up spawns, check the Spawns plugin and watch the video tutorial.
+Tell the Arena system which spawnfile you would like to use for the Arena spawns. For easy directions on how to set up spawns, check the Spawns plugin and watch the video tutorial.
 + /arena_game {gameID}
 Select the next minigame for the Arena. Use "/arena_list" to list all Arena minigames.
 + /arena_open
@@ -51,3 +53,4 @@ This lists all the minigames available for play. You can add more minigames by s
 Queue up for the Arena. Once the Arena starts, you will automatically be teleported in. Once the Arena gates are closed you may no longer join.
 + /arena_leave
 Leave the queue, or escape from the Arena if it has already started.
+
