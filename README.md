@@ -24,33 +24,31 @@ You can also add one or more games, always in the same folder. For this look at 
 ## Commands
 
 ```
-/arena_spawnfile arena_admin
-/arena_game arena_admin
-/arena_open arena_admin
-/arena_close arena_admin
-/arena_start arena_admin
-/arena_end arena_admin
-/arena_list <no flag required>
-/arena_join <no flag required>
-/arena_leave <no flag required>
+/arena_spawnfile {filename}
 ```
-
-+ /arena_spawnfile {filename}
 Tell the Arena system which spawnfile you would like to use for the Arena spawns. For easy directions on how to set up spawns, check the Spawns plugin and watch the video tutorial.
-+ /arena_game {gameID}
-Select the next minigame for the Arena. Use "/arena_list" to list all Arena minigames.
-+ /arena_open
-Open the Arena gates. Players may now join using "/arena_join" and may leave using "/arena_leave".
-+ /arena_close
-Close the Arena gates. Players may no longer join, but they are allowed to leave. If you leave the arena gates open while the minigame starts players will be allowed to join in at anytime. The minigame should handle this scenario and everything should be fine.
-+ /arena_start
-Start the Arena minigame.
-+ /arena_end
-Most Arena minigames will end on their own. You may use this command to force an Arena minigame to end early.
-+ /arena_list
+```
+/arena_list
+```
 This lists all the minigames available for play. You can add more minigames by searching the list on the bottom of this page.
-+ /arena_join
-Queue up for the Arena. Once the Arena starts, you will automatically be teleported in. Once the Arena gates are closed you may no longer join.
-+ /arena_leave
-Leave the queue, or escape from the Arena if it has already started.
+```
+/arena_game {gameID}
+```
+Select the next minigame for the Arena. Use "/arena_list" to list all Arena minigames.
+```
+/arena_open
+```
+Open the Arena gates. Players may now join using "/arena_join" and may leave using "/arena_leave".
+```
+/arena_close
+```
+Close the Arena gates. Players may no longer join, but they are allowed to leave. If you leave the arena gates open while the minigame starts players will be allowed to join in at anytime. The minigame should handle this scenario and everything should be fine.
+```
+/arena_start
+```
+Start the Arena minigame.
+```
+/arena_end
+```
+Most Arena minigames will end on their own. You may use this command to force an Arena minigame to end early.
 
