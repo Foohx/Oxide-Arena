@@ -1,6 +1,6 @@
 PLUGIN.Title = "Arena"
 PLUGIN.Description = "Arena API - Time for arena minigames!"
-PLUGIN.Author = "eDeloa, Hatemail & update by Fooxh"
+PLUGIN.Author = "eDeloa, Hatemail & update by Foohx"
 PLUGIN.Version = "1.0.1"
 
 print(PLUGIN.Title .. " (" .. PLUGIN.Version .. ") plugin loading")
@@ -33,6 +33,11 @@ function PLUGIN:Init()
     else
         self.ArenaData.InventoryToClean = {}
     end 
+end
+
+function PLUGIN:SaveInventoryToClean()
+    self.ArenaDataFile_InventoryToClean:SetText( json.encode( self.ArenaData.InventoryToClean ) )
+    self.ArenaDataFile_InventoryToClean:Save()
 end
 
 function PLUGIN:PostInit()
@@ -228,6 +233,7 @@ function PLUGIN:OnSpawnPlayer(playerclient, usecamp, avatar)
             local inv = rust.GetInventory(playerclient.netUser)
             inv:Clear()
             self:KillPlayer( playerclient.netUser )
+            self:SaveInventoryToClean()
         end)
     end
 end
@@ -458,6 +464,7 @@ function PLUGIN:LeaveArena(netuser, method)
     -- RPC Error Patch
     if (method == true) then
         self.ArenaData.InventoryToClean[rust.GetUserID(netuser)] = 1
+        self:SaveInventoryToClean()
     else
         local inv = rust.GetInventory(netuser)
         inv:Clear()
