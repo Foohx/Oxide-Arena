@@ -1,9 +1,9 @@
 PLUGIN.Title = "Arena"
 PLUGIN.Description = "Arena API - Time for arena minigames!"
-PLUGIN.Author = "eDeloa, Hatemail & update by Foohx"
+PLUGIN.Author = "eDeloa, Hatemail & fixed by Foohx"
 PLUGIN.Version = "1.0.1"
 
-print(PLUGIN.Title .. " (" .. PLUGIN.Version .. ") plugin loading")
+--print(PLUGIN.Title .. " (" .. PLUGIN.Version .. ") plugin loading")
 
 function PLUGIN:Init()
     -- Load the config file
